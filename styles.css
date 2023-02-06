@@ -56,18 +56,19 @@
 }
 
 /*======================================*/
-#input, #input2, #input3 {
+#input, #input2, #input3, #input4 {
     height: min(35px, 8vw);
     width: 100%;
     font-size: min(20pt, 7vw);
 	font-family: 'Roboto Mono', monospace;
+	background: transparent;
 }
 
 .token a {
 	color: #1a1a1a;
 }
 
-.token a.input, .token a.input2, .token a.input3 {
+.token a.input, .token a.input2, .token a.input3, .token a.input4 {
 	font-family: 'Roboto Mono', monospace;
 	background: #eee;
 	font-weight: bold;
@@ -86,6 +87,10 @@
 	display: none;
 }
 
+.dark .darkmodetext {
+	color: white
+}
+
 .token a.description{
 	white-space: pre-wrap;
 }
@@ -95,7 +100,7 @@ body {
 	font-size: min(12pt, 5vw);
 }
 
-#settings-compact-mode, #settings-hide-testers {
+#settings-compact-mode, #settings-hide-testers, #settings-dark-mode {
 	margin-left: 20px;
 	margin-right: -5px;
 }
