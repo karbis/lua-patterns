@@ -766,5 +766,4 @@ function PatternsPrint(input) {
 	basediv = document.getElementById("result")
 	CleanBaseDiv()
 	PatternsShow(output, basediv)
-
 }

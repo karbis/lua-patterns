@@ -40,10 +40,14 @@
 		<p class="center">Lua Patterns Viewer 1.1.5<br><a href="https://www.lua.org/manual/5.4/manual.html#6.4.1"
 			style="text-decoration: none; font-weight: bold; color: #76a2ff">Lua Manual</a></p>
 		
-		<p><br>Unimplemented:<br>- Reference Manual<br>- Match test<br>- Lua backslash escapes<br>- Unified token colors<br>- Proper explanations</p>
+		<p><br>Unimplemented:<br>- Reference Manual<br>- Lua backslash escapes<br>- Unified token colors<br>- Proper explanations</p>
 		<div>
 			<p><br>Settings:</p>
 			<input type="checkbox" id="settings-compact-mode">
+			<label for="settings-compact-mode" class="unselectable">Compact mode</label>
+			<br>
+			<input type="checkbox" id="settings-hide-testers">
+			<label for="settings-hide-testers" class="unselectable">Hide testers</label>
 			<script>
 				const body = document.querySelector("body")
 				const settings_compact_mode = document.getElementById("settings-compact-mode")
@@ -59,10 +63,28 @@
 				settings_compact_mode.addEventListener('change', pick_compact)
 				pick_compact({target: settings_compact_mode})
 			</script>
-			<label for="settings-compact-mode" class="unselectable">Compact mode</label>
+			<script>
+				const body2 = document.querySelector("body")
+				const settings_compact_mode2 = document.getElementById("settings-hide-testers")
+				const pick_compact2 = ({target: checkbox}) => {
+					localStorage.setItem("settings-hide-testers", checkbox.checked)
+					if (checkbox.checked) {
+						document.getElementById("gmatch").style.display = "none"
+						document.getElementById("gsub").style.display = "none"
+					} else {
+						if (document.getElementById("gmatch") != undefined) {
+							document.getElementById("gmatch").style.display = ""
+							document.getElementById("gsub").style.display = ""
+						}
+					}
+				}
+				settings_compact_mode2.checked = localStorage.getItem("settings-hide-testers") === "true"
+				settings_compact_mode2.addEventListener('change', pick_compact2)
+				pick_compact2({target: settings_compact_mode2})
+			</script>
 		</div>
-		<p class="center">Made by Spar.<br>Help wanted.<br><a href="https://gitspartv.github.io/GitSparTV/saythanks.html"><img src="https://raw.githubusercontent.com/GitSparTV/GitSparTV/main/saythanks.svg" width="100"></a><br><a href="https://github.com/GitSparTV/lua-patterns"
-				style="text-decoration: none; font-weight: bold; color: #76a2ff">GitHub repo</a><br><br>Interest counter (Temporary):<br><a href="https://www.webfreecounter.com/" target="_blank"><img src="https://www.webfreecounter.com/hit.php?id=gfcqax&nd=6&style=1" border="0" alt="web counter"></a></p>
+		<p class="center">Made by Spar.<br>Fork by Karbis.<br>Help wanted.<br><a href="https://gitspartv.github.io/GitSparTV/saythanks.html"><img src="https://raw.githubusercontent.com/GitSparTV/GitSparTV/main/saythanks.svg" width="100"></a><br><a href="https://github.com/GitSparTV/lua-patterns"
+				style="text-decoration: none; font-weight: bold; color: #76a2ff">GitHub repo</a><br><br></p>
 	</div>
 	<span onclick="OpenLeftSide()">open info</span>
 	<div id="main">
@@ -91,31 +113,56 @@
 			PatternsPrint(showcase)
 		</script>
 	</div>
-	<div id="bottom">
-		<div style="padding: 0px 25px 10px 0px;"><input id="input" spellcheck="false" autocomplete="off"></div>
-		<div id="resultt" style="overflow-y:auto; max-height: 85vh;"></div>
-		<script>
-			const input = document.getElementById('input');
-
-			const inputHandler = function (e) {
-				if (e.target.value.length == 0) {
-					window.history.replaceState(null, null, location.pathname);
-				} else {
-					window.history.replaceState(null, null, "?pattern=" + encodeURIComponent(e.target.value))
-				}
-				PatternsPrint(e.target.value)
-			}
-			input.addEventListener('input', inputHandler);
-			input.focus();
-			input.select();
-			let showcase = ""
-			const GETparams = new URLSearchParams(window.location.search);
-			const GETpattern = GETparams.get('pattern');
-			if (GETpattern) showcase = GETpattern;
-			input.value = showcase
-			PatternsPrint(showcase)
-		</script>
+	<br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/>
+	<div id="gmatch">
+		<h1 style="font-size: min(2em,8vw);">Lua Patterns Tester (gmatch)</h1>
+		<div style="padding: 0px 25px 10px 0px;"><input id="input2" spellcheck="false" autocomplete="off"></div>
+		<h2 id="output-match"></h2>
 	</div>
+	<div id="gsub">
+		<h1 style="font-size: min(2em,8vw);">Lua Patterns Tester (gsub)</h1>
+		<div style="padding: 0px 25px 10px 0px;"><input id="input3" spellcheck="false" autocomplete="off"></div>
+		<div style="padding: 0px 25px 10px 0px;"><input id="input4" spellcheck="false" autocomplete="off"></div>
+		<h2 id="output-sub"></h2>
+	</div>
+	<script src="https://github.com/fengari-lua/fengari-web/releases/download/v0.1.4/fengari-web.js" type="text/javascript"></script>
+	<script type="application/lua">
+		local js = require("js")
+		local document = js.global.document
+		local input2 = document:getElementById("input2")
+		local input3 = document:getElementById("input3")
+		--this is the absolute worst way to do this. god please forgive me
+		local function wait(delay)
+			local co = assert(coroutine.running(), "Should be run in a coroutine")
+		
+			js.global:setTimeout(function()
+				assert(coroutine.resume(co))
+			end, delay*1000)
+		
+			coroutine.yield()
+		end
+		local oldinputval = input2.value
+		local output = document:getElementById("output-match")
+		local output2 = document:getElementById("output-sub")
+		local replace = document:getElementById("input4")
+		coroutine.wrap(function()
+			while true do
+				local success = pcall(function()
+					local pattern = document:getElementById("input").value
+					local matched = input2.value:gmatch(pattern)()
+					local subd,_ = string.gsub(input3.value,pattern,replace.value)
+					output.innerText = matched or ""
+					output2.innerText = subd or ""
+					oldinputval = input2.value
+				end)
+				if not success then
+					output.innerText = "Invalid pattern"
+					output2.innerText = "Invalid pattern"
+				end
+				wait(.03)
+			end
+		end)()
+	</script>
 </body>
 
 </html>
