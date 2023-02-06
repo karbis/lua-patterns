@@ -135,7 +135,7 @@
 	</div>
 	<br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/>
 	<div id="gmatch">
-		<h1 style="font-size: min(2em,8vw);" class="darkmodetext">Lua Patterns Tester (gmatch)</h1>
+		<h1 style="font-size: min(2em,8vw);" class="darkmodetext">Lua Patterns Tester (match)</h1>
 		<div style="padding: 0px 25px 10px 0px;"><input id="input2" spellcheck="false" autocomplete="off" class="darkmodetext"></div>
 		<h2 id="output-match" class="darkmodetext"></h2>
 	</div>
@@ -169,7 +169,7 @@
 			while true do
 				local success = pcall(function()
 					local pattern = document:getElementById("input").value
-					local matched = input2.value:gmatch(pattern)()
+					local matched = input2.value:match(pattern)
 					local subd,_ = string.gsub(input3.value,pattern,replace.value)
 					output.innerText = matched or ""
 					output2.innerText = subd or ""
