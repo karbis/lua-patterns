@@ -11,9 +11,42 @@ let luaState = lauxlib.luaL_newstate()
 lualib.luaL_openlibs(luaState)
 
 lauxlib.luaL_dostring(luaState, fengari.to_luastring(`function match(input, pattern)
+	if pattern:match("^%^") then
+		local args = {input:find(pattern)}
+		local start, ending = args[1], args[2]
+		if not start then
+			return {input}
+		elseif #args == 2 then
+			return {"", {input:sub(start, ending)}, input:sub(ending + 1)}
+		else
+			local match = {}
+			local lastIndex = 1
+			for i = 3, #args do
+				local val = args[i]
+				local start, ending = input:find(val, lastIndex, true)
+				local val = input:sub(start, ending)
+				table.insert(match, input:sub(lastIndex, start - 1))
+				table.insert(match, val)
+				lastIndex = ending + 1
+			end
+			
+			if lastIndex <= ending then
+				table.insert(match, input:sub(lastIndex, ending))
+			end
+			
+			return {"", match, input:sub(ending + 1)}
+		end
+	end
+
 	local result = {}
 	local prevIndex = 1
-	local iterator = string.gmatch(input, "()" .. pattern .. "()")
+	local endingAppend = "()"
+	if pattern:match("%$$") then
+		pattern = pattern:sub(1, #pattern - 1)
+		endingAppend = "()$"
+	end
+	
+	local iterator = string.gmatch(input, "()" .. pattern .. endingAppend)
 	while true do
 		local args = {iterator()}
 		if #args == 0 then break end
