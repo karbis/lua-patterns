@@ -174,7 +174,7 @@ body {
 }
 
 body.hidden-testers #main #result {
-	--height: 100vh
+	--height: calc(100vh - 175px)
 }
 
 body:not(.hidden-testers) #main #result {
@@ -187,6 +187,17 @@ body:not(.hidden-testers) #main #result {
 	overflow-y: auto;
 }
 
-.match-match {
-	background-color: rgba(0, 69, 158, 50%);
+body.dark .match-node {
+	--mix-color: rgba(255, 255, 255, 0.5)
+}
+body:not(.dark) .match-node {
+	--mix-color: rgba(0, 0, 0, 0.5)
+}
+.match-node {
+	background-color: var(--color);
+}
+.match-node:hover {
+	outline-style: solid;
+	outline-width: 3px;
+	outline-color: color-mix(in srgb, var(--color) 50%, var(--mix-color) 50%);
 }

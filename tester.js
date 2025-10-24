@@ -108,7 +108,7 @@ function replace(input, pattern, replacement)
 end`))
 
 function getMatchData(isGsub) {
-	if (/^%\d$/g.test(patternInput.value)) return []
+	if (/^%\d$/g.test(patternInput.value)) return [] // weird crash
 	lua.lua_getglobal(luaState, (isGsub) ? "replace" : "match")
 	lua.lua_pushstring(luaState, testerInput.value)
 	lua.lua_pushstring(luaState, patternInput.value)
@@ -139,7 +139,7 @@ function getMatchData(isGsub) {
 				lua.lua_rawgeti(luaState, -1, j)
 				let str = fengari.to_jsstring(lua.lua_tostring(luaState, -1))
 				if (str != "" && j % 2 == 1) {
-					matchData.push({type: "match", value: str})
+					matchData.push({type: "match", value: str, id: i / 2})
 				} else if (j % 2 == 0) {
 					matchData.push({type: "group", value: str, id: j / 2})
 				}
@@ -164,11 +164,14 @@ function updateResult() {
 		
 		el.innerText = match.value
 		if (match.type == "match") {
-			el.style.backgroundColor = "hsla(214, 100%, 62%, 50%)"
-			el.title = "Match"
+			el.style.setProperty("--color", "hsla(214, 100%, 62%, 50%)")
+			el.title = `Match #${match.id}`
 		} else if (match.type == "group") {
-			el.style.backgroundColor = `hsla(${(214 + 36 * match.id) % 360}, 100%, 62%, 50%)`
+			el.style.setProperty("--color", `hsla(${(214 + 36 * match.id) % 360}, 100%, 62%, 50%)`)
 			el.title = `Group #${match.id}`
+		}
+		if (match.type != "text") {
+			el.classList.add("match-node")
 		}
 		
 		testerOutput.appendChild(el)
