@@ -139,9 +139,9 @@ function getMatchData(isGsub) {
 				lua.lua_rawgeti(luaState, -1, j)
 				let str = fengari.to_jsstring(lua.lua_tostring(luaState, -1))
 				if (str != "" && j % 2 == 1) {
-					matchData.push({type: "match", value: str, id: i / 2})
+					matchData.push({type: "match", value: str, matchId: i / 2})
 				} else if (j % 2 == 0) {
-					matchData.push({type: "group", value: str, id: j / 2})
+					matchData.push({type: "group", value: str, matchId: i / 2, groupId: j / 2})
 				}
 				
 				lua.lua_pop(luaState, 1)
@@ -165,10 +165,10 @@ function updateResult() {
 		el.innerText = match.value
 		if (match.type == "match") {
 			el.style.setProperty("--color", "hsla(214, 100%, 62%, 50%)")
-			el.title = `Match #${match.id}`
+			el.title = `Match #${match.matchId}`
 		} else if (match.type == "group") {
-			el.style.setProperty("--color", `hsla(${(214 + 36 * match.id) % 360}, 100%, 62%, 50%)`)
-			el.title = `Group #${match.id}`
+			el.style.setProperty("--color", `hsla(${(214 + 36 * match.groupId) % 360}, 100%, 62%, 50%)`)
+			el.title = `Match #${match.matchId}\nGroup #${match.groupId}`
 		}
 		if (match.type != "text") {
 			el.classList.add("match-node")
