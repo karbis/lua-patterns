@@ -56,7 +56,7 @@
 }
 
 /*======================================*/
-#input, #input2, #input3, #input4 {
+#input, #testerInput, #replaceInput {
     height: min(35px, 8vw);
     width: 100%;
     font-size: min(20pt, 7vw);
@@ -68,7 +68,7 @@
 	color: #1a1a1a;
 }
 
-.token a.input, .token a.input2, .token a.input3, .token a.input4 {
+.token a.input {
 	font-family: 'Roboto Mono', monospace;
 	background: #eee;
 	font-weight: bold;
@@ -87,8 +87,20 @@
 	display: none;
 }
 
-.dark .darkmodetext {
-	color: white
+.dark {
+	background-color: rgb(20, 22, 24)
+}
+
+.dark p, .dark input, .dark h1, .dark span, .dark h2, .dark label {
+	color: rgb(239, 239, 239)
+}
+
+body.hidden-testers #testers {
+	display: none
+}
+
+.dark input {
+	border-color: rgb(140, 140, 140)
 }
 
 .token a.description{
@@ -119,7 +131,7 @@ body {
 	border-right: 2px solid #222325;
 }
 
-#leftside p, label {
+#leftside p, #leftside label {
 	margin: 0px 10px 5px 10px;
 	color: #ffffff;
 	white-space: nowrap;
@@ -154,9 +166,27 @@ body {
 	text-decoration: underline;
 }
 
-#main, #gmatch, #gsub {
+#main {
 	margin-left: 250px;
 	position: relative;
 	transition: margin-left 1s;
 	padding: 0px 10px;
+}
+
+body.hidden-testers #main #result {
+	--height: 100vh
+}
+
+body:not(.hidden-testers) #main #result {
+	--height: max(calc(100vh - 400px), 300px);
+}
+
+#main #result {
+	max-height: var(--height);
+	min-height: var(--height);
+	overflow-y: auto;
+}
+
+.match-match {
+	background-color: rgba(0, 69, 158, 50%);
 }

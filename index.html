@@ -51,66 +51,33 @@
 			<br>
 			<input type="checkbox" id="settings-dark-mode">
 			<label for="settings-dark-mode" class="unselectable">Dark mode</label>
-			<script>
-				const body = document.querySelector("body")
-				const settings_compact_mode = document.getElementById("settings-compact-mode")
-				const pick_compact = ({target: checkbox}) => {
-					localStorage.setItem("settings-compact-mode", checkbox.checked)
-					if (checkbox.checked) {
-						body.classList.add("compact")
-					} else {
-						body.classList.remove("compact")
-					}
-				}
-				settings_compact_mode.checked = localStorage.getItem("settings-compact-mode") === "true"
-				settings_compact_mode.addEventListener('change', pick_compact)
-				pick_compact({target: settings_compact_mode})
-			</script>
-			<script>
-				const body2 = document.querySelector("body")
-				const settings_compact_mode2 = document.getElementById("settings-hide-testers")
-				const pick_compact2 = ({target: checkbox}) => {
-					localStorage.setItem("settings-hide-testers", checkbox.checked)
-					if (checkbox.checked) {
-						document.getElementById("gmatch").style.display = "none"
-						document.getElementById("gsub").style.display = "none"
-					} else {
-						if (document.getElementById("gmatch") != undefined) {
-							document.getElementById("gmatch").style.display = ""
-							document.getElementById("gsub").style.display = ""
-						}
-					}
-				}
-				settings_compact_mode2.checked = localStorage.getItem("settings-hide-testers") === "true"
-				settings_compact_mode2.addEventListener('change', pick_compact2)
-				pick_compact2({target: settings_compact_mode2})
-			</script>
-			<script>
-				const body3 = document.querySelector("body")
-				const settings_compact_mode3 = document.getElementById("settings-dark-mode")
-				const pick_compact3 = ({target: checkbox}) => {
-					localStorage.setItem("settings-dark-mode", checkbox.checked)
-					if (checkbox.checked) {
-						body.classList.add("dark")
-						body.style.background = "rgb(5,5,5)"
-					} else {
-						body.classList.remove("dark")
-						body.style.background = "white"
-					}
-				}
-				settings_compact_mode3.checked = localStorage.getItem("settings-dark-mode") === "true"
-				settings_compact_mode3.addEventListener('change', pick_compact3)
-				pick_compact3({target: settings_compact_mode3})
-			</script>
 		</div>
-		<p class="center">Made by Spar.<br>Fork by Karbis.<br>Help wanted.<br><a href="https://gitspartv.github.io/GitSparTV/saythanks.html"><img src="https://raw.githubusercontent.com/GitSparTV/GitSparTV/main/saythanks.svg" width="100"></a><br><a href="https://github.com/GitSparTV/lua-patterns"
+		<p class="center">Made by Spar.<br>Fork by Karbis.<br><a href="https://github.com/karbis/lua-patterns"
 				style="text-decoration: none; font-weight: bold; color: #76a2ff">GitHub repo</a><br><br></p>
 	</div>
-	<span onclick="OpenLeftSide()" class="darkmodetext">open info</span>
+	<span onclick="OpenLeftSide()">open info</span>
 	<div id="main">
-		<h1 style="font-size: min(2em,8vw);" class="darkmodetext">Lua Patterns Viewer</h1>
-		<div style="padding: 0px 25px 10px 0px;"><input id="input" spellcheck="false" autocomplete="off" class="darkmodetext"></div>
-		<div id="result" style="overflow-y:auto; max-height: 85vh;"></div>
+		<div id="viewer">
+			<h1 style="font-size: min(2em,8vw);">Lua Patterns Viewer</h1>
+			<div style="padding: 0px 25px 10px 0px;"><input id="input" spellcheck="false" autocomplete="off"></div>
+			<div id="result"></div>
+		</div>
+				
+		<div id="testers">
+			<h1 style="font-size: min(2em,8vw);">Lua Patterns Tester</h1>
+			<div style="padding: 0px 25px 10px 0px;">
+				<input id="testerInput" spellcheck="false" autocomplete="off" style="margin-bottom: 5px">
+				<div style="display: flex; align-items: center; width: calc(100% + 7px)">
+					<div style="min-width: 0">
+						<input type="checkbox" id="shouldReplace">
+						<label for="shouldReplace" class="unselectable" style="margin-left: 2px; margin-right: 10px">Replace</label>
+					</div>
+					<input style="flex: 1" id="replaceInput" spellcheck="false" autocomplete="off">
+				</div>
+			</div>
+			<h2 id="testerOutput" style="margin-top: 10px"></h2>
+		</div>
+		
 		<script>
 			const input = document.getElementById('input');
 
@@ -133,56 +100,10 @@
 			PatternsPrint(showcase)
 		</script>
 	</div>
-	<br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/>
-	<div id="gmatch">
-		<h1 style="font-size: min(2em,8vw);" class="darkmodetext">Lua Patterns Tester (match)</h1>
-		<div style="padding: 0px 25px 10px 0px;"><input id="input2" spellcheck="false" autocomplete="off" class="darkmodetext"></div>
-		<h2 id="output-match" class="darkmodetext"></h2>
-	</div>
-	<div id="gsub">
-		<h1 style="font-size: min(2em,8vw);" class="darkmodetext">Lua Patterns Tester (gsub)</h1>
-		<div style="padding: 0px 25px 10px 0px;"><input id="input3" spellcheck="false" autocomplete="off" class="darkmodetext"></div>
-		<div style="padding: 0px 25px 10px 0px;"><input id="input4" spellcheck="false" autocomplete="off" class="darkmodetext"></div>
-		<h2 id="output-sub" class="darkmodetext"></h2>
-	</div>
-	<script src="https://github.com/fengari-lua/fengari-web/releases/download/v0.1.4/fengari-web.js" type="text/javascript"></script>
-	<script type="application/lua">
-		local js = require("js")
-		local document = js.global.document
-		local input2 = document:getElementById("input2")
-		local input3 = document:getElementById("input3")
-		--this is the absolute worst way to do this. god please forgive me
-		local function wait(delay)
-			local co = assert(coroutine.running(), "Should be run in a coroutine")
-		
-			js.global:setTimeout(function()
-				assert(coroutine.resume(co))
-			end, delay*1000)
-		
-			coroutine.yield()
-		end
-		local oldinputval = input2.value
-		local output = document:getElementById("output-match")
-		local output2 = document:getElementById("output-sub")
-		local replace = document:getElementById("input4")
-		coroutine.wrap(function()
-			while true do
-				local success = pcall(function()
-					local pattern = document:getElementById("input").value
-					local matched = input2.value:match(pattern)
-					local subd,_ = string.gsub(input3.value,pattern,replace.value)
-					output.innerText = matched or ""
-					output2.innerText = subd or ""
-					oldinputval = input2.value
-				end)
-				if not success then
-					output.innerText = "Invalid pattern"
-					output2.innerText = "Invalid pattern"
-				end
-				wait(.03)
-			end
-		end)()
-	</script>
+	
+	<script src="settings.js"></script>
+	<script src="fengari-web.js" type="text/javascript"></script>
+	<script src="tester.js"></script>
 </body>
 
 </html>
