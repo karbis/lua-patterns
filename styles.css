@@ -219,6 +219,7 @@ body:not(.dark) .match-node {
 	font-size: 14px;
 	white-space: preserve nowrap;
 	padding: 4px;
+	z-index: 2;
 	
 	--border-color: color-mix(in srgb, var(--foreground-color) 80%, var(--background-color) 20%);
 	background-color: color-mix(in srgb, var(--background-color) 90%, var(--foreground-color) 10%);
