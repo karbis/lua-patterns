@@ -55,6 +55,10 @@
 	background: #E76262;
 }
 
+.token.classToken {
+	background: #5e91ff;
+}
+
 /*======================================*/
 .big-input {
 	height: min(35px, 8vw);
