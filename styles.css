@@ -56,8 +56,8 @@
 }
 
 /*======================================*/
-#input, #testerInput, #replaceInput {
-    height: min(35px, 8vw);
+.big-input {
+	height: min(35px, 8vw);
     width: 100%;
     font-size: min(20pt, 7vw);
 	font-family: 'Roboto Mono', monospace;
@@ -87,12 +87,19 @@
 	display: none;
 }
 
-.dark {
-	background-color: rgb(20, 22, 24)
+body.dark {
+	--background-color: rgb(20, 22, 24);
+	--foreground-color: rgb(239, 239, 239);
+	background-color: var(--background-color);
+}
+body:not(.dark) {
+	--background-color: rgb(255, 255, 255);
+	--foreground-color: rgb(0, 0, 0);
+	background-color: var(--background-color);
 }
 
 .dark p, .dark input, .dark h1, .dark span, .dark h2, .dark label {
-	color: rgb(239, 239, 239)
+	color: var(--foreground-color)
 }
 
 body.hidden-testers #testers {
@@ -112,7 +119,7 @@ body {
 	font-size: min(12pt, 5vw);
 }
 
-#settings-compact-mode, #settings-hide-testers, #settings-dark-mode {
+.settings input {
 	margin-left: 20px;
 	margin-right: -5px;
 }
@@ -195,13 +202,74 @@ body:not(.dark) .match-node {
 }
 .match-node {
 	background-color: var(--color);
+	position: relative;
 }
 .match-node:hover {
-	outline-style: solid;
-	outline-width: 3px;
-	outline-color: color-mix(in srgb, var(--color) 50%, var(--mix-color) 50%);
+	border-radius: 1px;
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--color) 50%, var(--mix-color) 50%);
+}
+
+.match-node:hover::after {
+	content: attr(data-title);
+	position: absolute;
+	pointer-events: none;
+	user-select: none;
+	transform: translate(-50%, calc(-100% - 6px));
+	left: 50%;
+	font-size: 14px;
+	white-space: preserve nowrap;
+	padding: 4px;
+	
+	--border-color: color-mix(in srgb, var(--foreground-color) 80%, var(--background-color) 20%);
+	background-color: color-mix(in srgb, var(--background-color) 90%, var(--foreground-color) 10%);
+	border: 1px solid var(--border-color);
+	border-radius: 3px;
+	color: var(--border-color)
 }
 
 #testerOutput {
 	white-space: pre-wrap
+}
+
+#inputHighlighter {
+	pointer-events: none;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	padding-left: 2px;
+	padding-right: 2px;
+	width: 100%;
+	grid-column: 1;
+	grid-row: 1;
+	border-style: solid;
+	border-color: transparent;
+	border-width: 2px;
+	overflow-x: auto;
+	scrollbar-width: none;
+	white-space: nowrap;
+}
+
+#inputHighlighter span {
+	pointer-events: none;
+	user-select: none;
+	position: relative;
+	z-index: -1;
+	color: transparent;
+	white-space: pre-wrap;
+	text-wrap: nowrap;
+	margin: initial;
+	max-width: initial;
+	padding: initial;
+	border: none;
+	overflow-wrap: initial;
+}
+
+body.dark #inputHighlighter span {
+	opacity: 30%
+}
+body:not(.dark) #inputHighlighter span {
+	opacity: 75%
+}
+
+body.no-pattern-highlights #inputHighlighter {
+	display: none
 }

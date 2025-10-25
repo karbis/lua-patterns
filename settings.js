@@ -19,3 +19,4 @@ function setUpSettingsListener(settingName, bodyClass) {
 setUpSettingsListener("settings-compact-mode", "compact")
 setUpSettingsListener("settings-hide-testers", "hidden-testers")
 setUpSettingsListener("settings-dark-mode", "dark")
+setUpSettingsListener("settings-pattern-highlighting", "no-pattern-highlights")

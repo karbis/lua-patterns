@@ -41,66 +41,51 @@
 			style="text-decoration: none; font-weight: bold; color: #76a2ff">Lua Manual</a></p>
 		
 		<p><br>Unimplemented:<br>- Reference Manual<br>- Lua backslash escapes<br>- Unified token colors<br>- Proper explanations</p>
-		<div>
+		<div class="settings">
 			<p><br>Settings:</p>
+			<input type="checkbox" id="settings-dark-mode">
+			<label for="settings-dark-mode" class="unselectable">Dark mode</label>
+			<br>
 			<input type="checkbox" id="settings-compact-mode">
 			<label for="settings-compact-mode" class="unselectable">Compact mode</label>
 			<br>
 			<input type="checkbox" id="settings-hide-testers">
 			<label for="settings-hide-testers" class="unselectable">Hide tester</label>
 			<br>
-			<input type="checkbox" id="settings-dark-mode">
-			<label for="settings-dark-mode" class="unselectable">Dark mode</label>
+			<input type="checkbox" id="settings-pattern-highlighting">
+			<label for="settings-pattern-highlighting" class="unselectable">Disable pattern highlights</label>
 		</div>
-		<p class="center">Made by Spar.<br>Fork by Karbis.<br><a href="https://github.com/karbis/lua-patterns"
+		<p class="center">Made by Spar.<br>Fork by karbis.<br><a href="https://github.com/karbis/lua-patterns"
 				style="text-decoration: none; font-weight: bold; color: #76a2ff">GitHub repo</a><br><br></p>
 	</div>
 	<span onclick="OpenLeftSide()">open info</span>
 	<div id="main">
 		<div id="viewer">
 			<h1 style="font-size: min(2em,8vw);">Lua Patterns Viewer</h1>
-			<div style="padding: 0px 25px 10px 0px;"><input id="input" spellcheck="false" autocomplete="off"></div>
+			<div style="padding: 0px 25px 10px 0px; display: grid">
+				<div id="inputHighlighter" class="big-input"></div>
+				<input class="big-input" id="input" spellcheck="false" autocomplete="off" style="grid-column: 1; grid-row: 1">
+			</div>
 			<div id="result"></div>
 		</div>
 				
 		<div id="testers">
 			<h1 style="font-size: min(2em,8vw);">Lua Patterns Tester</h1>
 			<div style="padding: 0px 25px 10px 0px;">
-				<input id="testerInput" spellcheck="false" autocomplete="off" style="margin-bottom: 5px">
-				<div style="display: flex; align-items: center; width: calc(100% + 7px)">
+				<input class="big-input" id="testerInput" spellcheck="false" autocomplete="off" style="margin-bottom: 5px">
+				<div style="display: flex; align-items: center; width: calc(100% + 7.5px)">
 					<div style="min-width: 0">
 						<input type="checkbox" id="shouldReplace">
 						<label for="shouldReplace" class="unselectable" style="margin-left: 2px; margin-right: 10px">Replace</label>
 					</div>
-					<input style="flex: 1" id="replaceInput" spellcheck="false" autocomplete="off">
+					<input class="big-input" style="flex: 1" id="replaceInput" spellcheck="false" autocomplete="off">
 				</div>
 			</div>
 			<h2 id="testerOutput" style="margin-top: 10px"></h2>
 		</div>
-		
-		<script>
-			const input = document.getElementById('input');
-
-			const inputHandler = function (e) {
-				if (e.target.value.length == 0) {
-					window.history.replaceState(null, null, location.pathname);
-				} else {
-					window.history.replaceState(null, null, "?pattern=" + encodeURIComponent(e.target.value))
-				}
-				PatternsPrint(e.target.value)
-			}
-			input.addEventListener('input', inputHandler);
-			input.focus();
-			input.select();
-			let showcase = ""
-			const GETparams = new URLSearchParams(window.location.search);
-			const GETpattern = GETparams.get('pattern');
-			if (GETpattern) showcase = GETpattern;
-			input.value = showcase
-			PatternsPrint(showcase)
-		</script>
 	</div>
 	
+	<script src="patternInput.js"></script>
 	<script src="settings.js"></script>
 	<script src="fengari-web.js" type="text/javascript"></script>
 	<script src="tester.js"></script>

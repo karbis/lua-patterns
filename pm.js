@@ -44,9 +44,11 @@ const TokToStr = [
 print = function () { }
 
 class Token {
-	constructor(tk, str) {
+	constructor(tk, str, start, ending) {
 		this.type = tk
 		this.string = str
+		this.subStringStart = start
+		this.subStringEnd = ending
 	}
 }
 
@@ -58,6 +60,7 @@ class Lexer {
 		this.tokens = []
 		this.current = str.charAt(0)
 		this.caret = 0
+		this.lastTokenCaret = 0
 	}
 
 	Next() {
@@ -75,6 +78,15 @@ class Lexer {
 		}
 		return false
 	}
+	
+	CheckNextAndAdd(char, type, info) {
+		if (this.current === char) {
+			this.AddToken(type, info)
+			this.Next()
+			return true
+		}
+		return false
+	}
 
 	IsEnd() {
 		return this.caret >= this.end
@@ -85,7 +97,8 @@ class Lexer {
 	}
 
 	AddToken(type, info) {
-		this.tokens.push(new Token(type, info))
+		this.tokens.push(new Token(type, info, this.lastTokenCaret, this.caret + 1))
+		this.lastTokenCaret = this.caret + 1
 	}
 
 	Sub(a, b) {
@@ -137,7 +150,8 @@ function ReadEscape(lex) {
 function ReadSet(lex) {
 	lex.AddToken(TOK.LBRACKET)
 	lex.Next()
-	if (lex.CheckNext("^")) lex.AddToken(TOK.INVERSE);
+	//if (lex.CheckNext("^")) lex.AddToken(TOK.INVERSE);
+	lex.CheckNextAndAdd("^", TOK.INVERSE)
 	do {
 		if (lex.IsEnd()) { lex.AddToken(TOK.ERROR, "Missing \"]\" to close set."); throw new Error("") }
 		if (lex.current === "%" && lex.caret < lex.end) {
@@ -155,9 +169,10 @@ function ReadSet(lex) {
 function PatternsLex(input) {
 	const lex = new Lexer(input)
 	try {
-		if (lex.CheckNext("^")) {
-			lex.AddToken(TOK.START)
-		}
+		//if (lex.CheckNext("^")) {
+		//	lex.AddToken(TOK.START)
+		//}
+		lex.CheckNextAndAdd("^", TOK.START)
 		print("Str", input)
 		print("Len", input.length)
 		while (!lex.IsEnd()) {
@@ -189,9 +204,10 @@ function PatternsLex(input) {
 					switch (lex.current) {
 						case "b":
 							if (lex.caret + 2 >= lex.end) { lex.AddToken(TOK.ERROR, "Missing characters for \"%b\" pattern. Example: \"%b()\"."); throw new Error(""); }
-							lex.AddToken(TOK.BALANCED, lex.Sub(lex.caret + 1, lex.caret + 3))
+							let caret = lex.caret
 							lex.Next()
 							lex.Next()
+							lex.AddToken(TOK.BALANCED, lex.Sub(caret + 1, caret + 3))
 							lex.Next()
 							break
 						case "f":
@@ -238,7 +254,7 @@ function PatternsLex(input) {
 			lex.AddToken(TOK.ERROR, "Lexer error: " + e.message)
 		}
 	}
-
+	
 	return lex.tokens
 }
 
@@ -663,13 +679,13 @@ function PatternsShow(nodes, parent) {
 				case PAT.ESCAPED:
 					{
 						let element = CreateDiv("char", parent, "%" + node.text, "Escaped character.", "Matches the character \"" + node.text + "\" literally.")
-						if (parent === basediv) { PatternsShow(node.children, element) }
+						PatternsShow(node.children, element)
 					}
 					break
 				case PAT.CLASS:
 					{
 						let element = CreateDiv("class", parent, "%" + node.text, "Class (" + PAT_CLASS_NAMES[node.text][0] + ").", "Matches " + PAT_CLASS_NAMES[node.text][1] + ".")
-						if (parent === basediv) { PatternsShow(node.children, element) }
+						PatternsShow(node.children, element)
 					}
 					break
 				case PAT.CAPTUREREF:
@@ -766,4 +782,6 @@ function PatternsPrint(input) {
 	basediv = document.getElementById("result")
 	CleanBaseDiv()
 	PatternsShow(output, basediv)
+	
+	return tokens
 }

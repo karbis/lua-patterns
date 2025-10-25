@@ -41,12 +41,19 @@ lauxlib.luaL_dostring(luaState, fengari.to_luastring(`function match(input, patt
 	local result = {}
 	local prevIndex = 1
 	local endingAppend = "()"
+	local startAppend = "()"
 	if pattern:match("%$$") then
 		pattern = pattern:sub(1, #pattern - 1)
 		endingAppend = "()$"
 	end
+	if pattern:match("^%(%)") then
+		startAppend = ""
+	end
+	if pattern:match("%(%)$") then
+		endingAppend = endingAppend:sub(3)
+	end
 	
-	local iterator = string.gmatch(input, "()" .. pattern .. endingAppend)
+	local iterator = string.gmatch(input, startAppend .. pattern .. endingAppend)
 	while true do
 		local args = {iterator()}
 		if #args == 0 then break end
@@ -140,16 +147,16 @@ function replace(input, pattern, replacement)
 	return matches
 end`))
 
-function getMatchData(isGsub) {
-	if (/^%\d$/g.test(patternInput.value)) return [] // weird crash
-	lua.lua_getglobal(luaState, (isGsub) ? "replace" : "match")
-	lua.lua_pushstring(luaState, testerInput.value)
-	lua.lua_pushstring(luaState, patternInput.value)
-	if (isGsub) {
-		lua.lua_pushstring(luaState, replaceInput.value)
+function getMatchData(input, pattern, replacement) {
+	if (/^%\d$/g.test(pattern)) return [] // weird crash
+	lua.lua_getglobal(luaState, (replacement) ? "replace" : "match")
+	lua.lua_pushstring(luaState, input)
+	lua.lua_pushstring(luaState, pattern)
+	if (replacement) {
+		lua.lua_pushstring(luaState, replacement)
 	}
 	
-	let result = lua.lua_pcall(luaState, (isGsub) ? 3 : 2, 1, 0)
+	let result = lua.lua_pcall(luaState, (replacement) ? 3 : 2, 1, 0)
 	if (result != lua.LUA_OK) {
 		let err = fengari.to_jsstring(lua.lua_tostring(luaState, -1))
 		lua.lua_pop(luaState, 1)
@@ -189,7 +196,7 @@ function getMatchData(isGsub) {
 }
 
 function updateResult() {
-	let matchData = getMatchData(shouldReplace.checked)
+	let matchData = getMatchData(testerInput.value, patternInput.value, (shouldReplace.checked) ? replaceInput.value : null)
 	
 	testerOutput.innerHTML = ""
 	matchData.forEach((match) => {
@@ -198,10 +205,10 @@ function updateResult() {
 		el.innerText = match.value
 		if (match.type == "match") {
 			el.style.setProperty("--color", "hsla(214, 100%, 62%, 50%)")
-			el.title = `Match #${match.matchId}`
+			el.dataset.title = `Match #${match.matchId}`
 		} else if (match.type == "group") {
 			el.style.setProperty("--color", `hsla(${(214 + 36 * match.groupId) % 360}, 100%, 62%, 50%)`)
-			el.title = `Match #${match.matchId}\nGroup #${match.groupId}`
+			el.dataset.title = `Match #${match.matchId}\nGroup #${match.groupId}`
 		}
 		if (match.type != "text") {
 			el.classList.add("match-node")
