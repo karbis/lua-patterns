@@ -15,7 +15,7 @@ const tokColors = Object.freeze({
 	[TOK.RBRACKET]: "set",
 	[TOK.INVERSE]: "set",
 	[TOK.CLASS]: "classToken",
-	[TOK.CAPTUREREF]: "captureref",
+	[TOK.CAPTUREREF]: "capture",
 	[TOK.BALANCED]: "balanced",
 	[TOK.FRONTIER]: "frontier",
 	[TOK.ERROR]: "error",
