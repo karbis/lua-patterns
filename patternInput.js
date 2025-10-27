@@ -54,22 +54,23 @@ let simplifyTokens = (tokens) => {
 	
 	i = -1
 	// set, capture and frontier grouping
+	let stacks = []
 	while (i < tokens.length - 1) {
 		i++
 		let curToken = tokens[i]
 		let prevToken = tokens[i - 1]
-		
-		if (curToken.type != TOK.LBRACKET && curToken.type != TOK.LPAR) continue
-		let endingChar = (curToken.type == TOK.LBRACKET) ? TOK.RBRACKET : TOK.RPAR
-		let intendedType = (curToken.type == TOK.LBRACKET && prevToken && prevToken.type == TOK.FRONTIER) ? TOK.FRONTIER : curToken.type
-		curToken.type = intendedType
-		
-		while (i < tokens.length - 1 && tokens[i].type != endingChar) {
-			i += 1
-			if (!isBasicChar(tokens[i]) && tokens[i].type != TOK.INVERSE) continue
-			tokens[i].type = intendedType
+				
+		if (curToken.type == TOK.LBRACKET || curToken.type == TOK.LPAR) {
+			stacks.push(curToken.type)
+		} else if (curToken.type == TOK.RBRACKET || curToken.type == TOK.RPAR) {
+			stacks.pop()
 		}
-		tokens[i].type = intendedType
+		
+		if (stacks[0] && isBasicChar(curToken)) {
+			let lastStack = stacks[stacks.length - 1]
+			let intendedType = (lastStack == TOK.LBRACKET && prevToken && prevToken.type == TOK.FRONTIER) ? TOK.FRONTIER : lastStack
+			curToken.type = intendedType
+		}
 	}
 	
 	return tokens
