@@ -61,15 +61,15 @@ let simplifyTokens = (tokens) => {
 		let prevToken = tokens[i - 1]
 				
 		if (curToken.type == TOK.LBRACKET || curToken.type == TOK.LPAR) {
-			stacks.push(curToken.type)
+			let intendedType = (curToken.type == TOK.LBRACKET && prevToken && prevToken.type == TOK.FRONTIER) ? TOK.FRONTIER : curToken.type
+			stacks.push(intendedType)
 		} else if (curToken.type == TOK.RBRACKET || curToken.type == TOK.RPAR) {
+			curToken.type = stacks[stacks.length - 1]
 			stacks.pop()
 		}
 		
 		if (stacks[0] && isBasicChar(curToken)) {
-			let lastStack = stacks[stacks.length - 1]
-			let intendedType = (lastStack == TOK.LBRACKET && prevToken && prevToken.type == TOK.FRONTIER) ? TOK.FRONTIER : lastStack
-			curToken.type = intendedType
+			curToken.type = stacks[stacks.length - 1]
 		}
 	}
 	
